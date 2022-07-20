@@ -15,7 +15,6 @@
             :align="item.options.align"
           >
             <el-col v-for="(col, colIndex) in item.columns" :key="colIndex" :span="col.span">
-              
 
               <template v-for="citem in col.list" >
                 <el-form-item v-if="citem.type=='blank'" :label="citem.name" :prop="citem.model" :key="citem.key">
@@ -30,6 +29,7 @@
                   @input-change="onInputChange">
                 </genetate-form-item>
               </template>
+
             </el-col>
           </el-row>
         </template>
@@ -47,7 +47,8 @@
             :rules="rules" 
             :widget="item" 
             @input-change="onInputChange"
-            :remote="remote">
+            :remote="remote"
+            :url="url">
           </genetate-form-item>
         </template>
         
@@ -65,7 +66,17 @@ export default {
   components: {
     GenetateFormItem
   },
-  props: ['data', 'remote', 'value', 'insite'],
+  //props: ['data', 'remote', 'value', 'insite', 'url'],
+  props: {
+    data: Object,
+    remote: Object,
+    value: Object,
+    insite: String,
+    url: {
+      type: String,
+      default: 'http://top-idea.traleado-global.test/api/countries/get/all'
+    }
+  },
   data () {
     return {
       models: {},
@@ -76,6 +87,7 @@ export default {
     this.generateModle(this.data.list)
   },
   mounted () {
+    console.log('generateForm-norman')
   },
   methods: {
     generateModle (genList) {

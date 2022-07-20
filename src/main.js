@@ -32,33 +32,20 @@ const messages = {
   }
 }
 
-const i18n = new VueI18n({
-  messages: {
-    'en-US': {
-      ...enLocale, ...messages['en-US']
-    },
-    'zh-CN': {
-      ...zhLocale, ...messages['zh-CN']
-    }
-  }
-})
+Vue.locale('en-US', {...enLocale, ...messages['en-US']})
+Vue.locale('zh-CN', {...zhLocale, ...messages['zh-CN']})
+Vue.config.lang = 'zh-CN'
 
-Vue.use(ElementUI, { 
-  size: 'small',
-  i18n: (key, value) => i18n.t(key, value)
-})
+Vue.use(ElementUI, { size: 'small' })
 
 // import 'form-making/dist/FormMaking.css'
 // import FormMaking from 'form-making'
 import FormMaking from './index'
-Vue.use(FormMaking, {
-  i18n
-})
+Vue.use(FormMaking)
 
 Vue.config.productionTip = false
 
 new Vue({
-  i18n,
   router,
   render: h => h(App)
 }).$mount('#app')

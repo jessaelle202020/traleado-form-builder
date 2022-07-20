@@ -93,16 +93,14 @@ export default {
     handleMoveEnd ({newIndex, oldIndex}) {
       console.log('index', newIndex, oldIndex)
     },
-    handleSelectWidget (index) {
-      console.log(index, '#####')
+    handleSelectWidget (index) {      
       this.selectWidget = this.data.list[index]
     },
     handleWidgetAdd (evt) {
       console.log('add', evt)
       console.log('end', evt)
       const newIndex = evt.newIndex
-      const to = evt.to
-      console.log(to)
+      const to = evt.to      
       
       //为拖拽到容器的元素添加唯一 key
       const key = Date.parse(new Date()) + '_' + Math.ceil(Math.random() * 99999)
@@ -119,6 +117,18 @@ export default {
       })
 
       if (this.data.list[newIndex].type === 'radio' || this.data.list[newIndex].type === 'checkbox' || this.data.list[newIndex].type === 'select') {
+        this.$set(this.data.list, newIndex, {
+          ...this.data.list[newIndex],
+          options: {
+            ...this.data.list[newIndex].options,
+            options: this.data.list[newIndex].options.options.map(item => ({
+              ...item
+            }))
+          }
+        })
+      }
+
+      if (this.data.list[newIndex].type === 'selectcountry') {
         this.$set(this.data.list, newIndex, {
           ...this.data.list[newIndex],
           options: {
@@ -173,6 +183,18 @@ export default {
       })
 
       if (row.columns[colIndex].list[newIndex].type === 'radio' || row.columns[colIndex].list[newIndex].type === 'checkbox' || row.columns[colIndex].list[newIndex].type === 'select') {
+        this.$set(row.columns[colIndex].list, newIndex, {
+          ...row.columns[colIndex].list[newIndex],
+          options: {
+            ...row.columns[colIndex].list[newIndex].options,
+            options: row.columns[colIndex].list[newIndex].options.options.map(item => ({
+              ...item
+            }))
+          }
+        })
+      }
+
+      if (row.columns[colIndex].list[newIndex].type === 'selectcountry') {
         this.$set(row.columns[colIndex].list, newIndex, {
           ...row.columns[colIndex].list[newIndex],
           options: {

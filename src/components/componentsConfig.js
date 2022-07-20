@@ -1,4 +1,4 @@
-export const basicComponents = [
+export const basicComponents = [    
   {
     type: 'input',
     icon: 'icon-input',
@@ -10,8 +10,6 @@ export const basicComponents = [
       pattern: '',
       placeholder: '',
       disabled: false,
-      maxlength: -1,
-      showWordLimit: false,
     }
   },
   {
@@ -23,9 +21,7 @@ export const basicComponents = [
       required: false,
       disabled: false,
       pattern: '',
-      placeholder: '',
-      maxlength: -1,
-      showWordLimit: false,
+      placeholder: ''
     }
   },
   {
@@ -35,8 +31,8 @@ export const basicComponents = [
       width: '',
       required: false,
       defaultValue: 0,
-      min: '',
-      max: '',
+      min: '0',
+      max: '2000',
       step: 1,
       disabled: false,
       controlsPosition: ''
@@ -197,6 +193,38 @@ export const basicComponents = [
     }
   },
   {
+    type: 'selectcountry',
+    icon: 'icon-select',
+    options: {
+      defaultValue: '',
+      multiple: false,
+      disabled: false,
+      clearable: false,
+      placeholder: '',
+      required: false,
+      showLabel: false,
+      width: '100%',
+      options: [
+        {
+          value: 'Option 1'
+        },
+        {
+          value: 'Option 2'
+        },{
+          value: 'Option 3'
+        }
+      ],
+      remote: false,
+      filterable: false,
+      remoteOptions: [],
+      props: {
+        value: 'value',
+        label: 'label'
+      },
+      remoteFunc: ''
+    }
+  },
+  {
     type: 'switch',
     icon: 'icon-switch',
     options: {
@@ -219,7 +247,7 @@ export const basicComponents = [
       range: false,
       width: ''
     }
-  },
+  },  
   {
     type: 'text',
     icon: 'icon-wenzishezhi-',
@@ -227,7 +255,17 @@ export const basicComponents = [
       defaultValue: 'This is a text',
       customClass: '',
     }
-  }
+  },  
+  {
+    type: 'link',            
+    icon: 'icon-shangchuan',
+    options: {
+      defaultValue: 'Link to display',
+      customClass: '',
+      hideName: false,
+      placeholder: '',
+    }
+  },
 ]
 
 export const advanceComponents = [
@@ -250,7 +288,7 @@ export const advanceComponents = [
       width: '',
       tokenFunc: 'funcGetToken',
       token: '',
-      domain: 'https://tcdn.form.making.link/',
+      domain: 'http://pfp81ptt6.bkt.clouddn.com/',
       disabled: false,
       length: 8,
       multiple: false,
@@ -258,7 +296,7 @@ export const advanceComponents = [
       isDelete: false,
       min: 0,
       isEdit: false,
-      action: 'https://tools-server.making.link/api/transfer'
+      action: 'https://jsonplaceholder.typicode.com/photos/'
     }
   },
   {
@@ -305,7 +343,7 @@ export const layoutComponents = [
       }
     ],
     options: {
-      gutter: 0,
+      gutter: 24,
       justify: 'start',
       align: 'top'
     }

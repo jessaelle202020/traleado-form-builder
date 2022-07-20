@@ -1,7 +1,7 @@
 <template>
-  <el-form-item :label="widget.name" :prop="widget.model">
+  <el-form-item :label="(widget.options.hideName == true) ? '' : widget.name" :prop="widget.model">
     <template v-if="widget.type == 'input'" >
-      <el-input
+      <el-input 
         v-if="widget.options.dataType == 'number' || widget.options.dataType == 'integer' || widget.options.dataType == 'float'"
         type="number"
         v-model.number="dataModel"
@@ -9,15 +9,13 @@
         :style="{width: widget.options.width}"
         :disabled="widget.options.disabled"
       ></el-input>
-      <el-input
+      <el-input 
         v-else
-        type="text"
+        :type="widget.options.dataType"
         v-model="dataModel"
         :disabled="widget.options.disabled"
         :placeholder="widget.options.placeholder"
         :style="{width: widget.options.width}"
-        :maxlength="widget.options.maxlength"
-        :show-word-limit="widget.options.showWordLimit"
       ></el-input>
     </template>
 
@@ -27,14 +25,12 @@
         :disabled="widget.options.disabled"
         :placeholder="widget.options.placeholder"
         :style="{width: widget.options.width}"
-        :maxlength="widget.options.maxlength"
-        :show-word-limit="widget.options.showWordLimit"
       ></el-input>
     </template>
 
     <template v-if="widget.type == 'number'">
-      <el-input-number
-        v-model="dataModel"
+      <el-input-number 
+        v-model="dataModel" 
         :style="{width: widget.options.width}"
         :step="widget.options.step"
         controls-position="right"
@@ -64,19 +60,21 @@
         :style="{width: widget.options.width}"
         :disabled="widget.options.disabled"
       >
-        <el-checkbox
-
+        <el-checkbox          
           :style="{display: widget.options.inline ? 'inline-block' : 'block'}"
           :label="item.value" v-for="(item, index) in (widget.options.remote ? widget.options.remoteOptions : widget.options.options)" :key="index"
         >
-          <template v-if="widget.options.remote">{{item.label}}</template>
-          <template v-else>{{widget.options.showLabel ? item.label : item.value}}</template>
+          <!-- <template v-if="widget.options.remote">{{item.label}}</template>
+          <template v-else>{{widget.options.showLabel ? item.label : item.value}}</template> -->
+
+          <template v-if="widget.options.remote"><div v-html="item.label"></div></template>
+          <template v-else><div v-html="widget.options.showLabel ? item.label : item.value"></div></template>
         </el-checkbox>
       </el-checkbox-group>
     </template>
 
     <template v-if="widget.type == 'time'">
-      <el-time-picker
+      <el-time-picker 
         v-model="dataModel"
         :is-range="widget.options.isRange"
         :placeholder="widget.options.placeholder"
@@ -120,7 +118,7 @@
     </template>
 
     <template v-if="widget.type == 'color'">
-      <el-color-picker
+      <el-color-picker 
         v-model="dataModel"
         :disabled="widget.options.disabled"
         :show-alpha="widget.options.showAlpha"
@@ -141,6 +139,24 @@
       </el-select>
     </template>
 
+    <template v-if="widget.type == 'selectcountry'">
+      <el-select
+        v-model="dataModel"
+        :disabled="widget.options.disabled"
+        :multiple="widget.options.multiple"
+        :clearable="widget.options.clearable"
+        :placeholder="widget.options.placeholder"
+        :style="{width: widget.options.width}"
+        :filterable="widget.options.filterable"
+      >
+        <el-option v-for="item in widget.options.remoteOptions" 
+          :key="item.code" 
+          :value="item.code" 
+          :label="item.name">
+        </el-option>
+      </el-select>
+    </template>
+
     <template v-if="widget.type=='switch'">
       <el-switch
         v-model="dataModel"
@@ -150,7 +166,7 @@
     </template>
 
     <template v-if="widget.type=='slider'">
-      <el-slider
+      <el-slider 
         v-model="dataModel"
         :min="widget.options.min"
         :max="widget.options.max"
@@ -203,17 +219,34 @@
       </el-cascader>
     </template>
 
-    <template v-if="widget.type == 'text'">
-      <span>{{dataModel}}</span>
+    <template v-if="widget.type == 'text'">      
+      <div v-html="dataModel"></div>
     </template>
+
+    <template v-if="widget.type == 'link'">
+      <!-- <span>{{dataModel}}</span> -->      
+      <a :href="widget.options.placeholder">{{dataModel}}</a>
+    </template>
+
   </el-form-item>
 </template>
 
 <script>
 import FmUpload from './Upload'
+import axios from 'axios'
 
 export default {
-  props: ['widget', 'models', 'rules', 'remote'],
+  //props: ['widget', 'models', 'rules', 'remote', 'url'],
+  props: {
+    widget: Object,
+    models: Object,
+    rules: Object,
+    remote: Object,
+    url: {
+      type: String,
+      default: 'http://top-idea.traleado-global.test/api/countries/get/all'
+    }
+  },
   components: {
     FmUpload
   },
@@ -240,8 +273,26 @@ export default {
         this.widget.options.token = data
       })
     }
+
+    if(this.widget.type === 'selectcountry'){
+      this.getCountries().then( (data)=> {
+        this.widget.options.remoteOptions = data.map(item => {
+          return {
+            code: item['code'],
+            name: item['name'],            
+          }          
+        })
+      })
+    }
+    
   },
   methods: {
+    async getCountries(){      
+      const { data } = await axios.get(this.url)      
+      return data.data
+    }
+  },
+  mounted(){        
   },
   watch: {
     dataModel: {

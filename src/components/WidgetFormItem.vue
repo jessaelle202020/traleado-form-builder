@@ -1,18 +1,16 @@
 <template>
   <el-form-item class="widget-view "
-      v-if="element && element.key"
+      v-if="element && element.key" 
       :class="{active: selectWidget.key == element.key, 'is_req': element.options.required}"
-      :label="element.name"
+      :label="(element.options.hideName == true) ? '' : element.name"
       @click.native.stop="handleSelectWidget(index)"
     >
         <template v-if="element.type == 'input'">
-          <el-input
+          <el-input 
             v-model="element.options.defaultValue"
             :style="{width: element.options.width}"
             :placeholder="element.options.placeholder"
             :disabled="element.options.disabled"
-			      :maxlength="element.options.maxlength"
-			      :show-word-limit="element.options.showWordLimit"
           ></el-input>
         </template>
 
@@ -22,14 +20,12 @@
             :style="{width: element.options.width}"
             :disabled="element.options.disabled"
             :placeholder="element.options.placeholder"
-			      :maxlength="element.options.maxlength"
-			      :show-word-limit="element.options.showWordLimit"
           ></el-input>
         </template>
 
         <template v-if="element.type == 'number'">
-          <el-input-number
-            v-model="element.options.defaultValue"
+          <el-input-number 
+            v-model="element.options.defaultValue" 
             :disabled="element.options.disabled"
             :controls-position="element.options.controlsPosition"
             :style="{width: element.options.width}"
@@ -41,10 +37,10 @@
             :style="{width: element.options.width}"
             :disabled="element.options.disabled"
           >
-            <el-radio
+            <el-radio  
               :style="{display: element.options.inline ? 'inline-block' : 'block'}"
               :label="item.value" v-for="(item, index) in element.options.options" :key="item.value + index"
-
+              
             >
               {{element.options.showLabel ? item.label : item.value}}
             </el-radio>
@@ -58,15 +54,16 @@
           >
             <el-checkbox
               :style="{display: element.options.inline ? 'inline-block' : 'block'}"
-              :label="item.value" v-for="(item, index) in element.options.options" :key="item.value + index"
+              :label="item.value" v-for="(item, index) in element.options.options" :key="item.value + index"              
             >
-              {{element.options.showLabel ? item.label : item.value}}
+              <div v-html="element.options.showLabel ? item.label : item.value"></div>
+              <!-- {{element.options.showLabel ? item.label : item.value}} -->
             </el-checkbox>
           </el-checkbox-group>
         </template>
 
         <template v-if="element.type == 'time'">
-          <el-time-picker
+          <el-time-picker 
             v-model="element.options.defaultValue"
             :is-range="element.options.isRange"
             :placeholder="element.options.placeholder"
@@ -94,7 +91,7 @@
             :disabled="element.options.disabled"
             :editable="element.options.editable"
             :clearable="element.options.clearable"
-            :style="{width: element.options.width}"
+            :style="{width: element.options.width}"  
           >
           </el-date-picker>
         </template>
@@ -108,7 +105,7 @@
         </template>
 
         <template v-if="element.type == 'color'">
-          <el-color-picker
+          <el-color-picker 
             v-model="element.options.defaultValue"
             :disabled="element.options.disabled"
             :show-alpha="element.options.showAlpha"
@@ -128,6 +125,25 @@
           </el-select>
         </template>
 
+
+        <template v-if="element.type == 'selectcountry'">
+          <el-select
+            v-model="element.options.defaultValue"
+            :disabled="element.options.disabled"
+            :multiple="element.options.multiple"
+            :clearable="element.options.clearable"
+            :placeholder="element.options.placeholder"
+            :style="{width: element.options.width}"
+          >
+            <el-option v-for="item in element.options.options" :key="item.value" :value="item.value" :label="element.options.showLabel?item.label:item.value"></el-option>
+            <!-- <el-option v-for="item in widget.options.options" 
+              :key="item.country_code" 
+              :value="item.country_code" 
+              :label="item.country">
+            </el-option> -->
+          </el-select>
+        </template>
+
         <template v-if="element.type=='switch'">
           <el-switch
             v-model="element.options.defaultValue"
@@ -137,7 +153,7 @@
         </template>
 
         <template v-if="element.type=='slider'">
-          <el-slider
+          <el-slider 
             v-model="element.options.defaultValue"
             :min="element.options.min"
             :max="element.options.max"
@@ -159,7 +175,7 @@
             token="xxx"
             domain="xxx"
           >
-
+            
           </fm-upload>
         </template>
 
@@ -189,7 +205,11 @@
         </template>
 
         <template v-if="element.type == 'text'">
-          <span>{{element.options.defaultValue}}</span>
+          <div v-html="element.options.defaultValue"></div>
+        </template>
+
+        <template v-if="element.type == 'link'">
+          <a :href="element.options.placeholder">{{element.options.defaultValue}}</a>
         </template>
 
         <div class="widget-view-action" v-if="selectWidget.key == element.key">
@@ -200,7 +220,7 @@
         <div class="widget-view-drag" v-if="selectWidget.key == element.key">
           <i class="iconfont icon-drag drag-widget"></i>
         </div>
-
+        
     </el-form-item>
 </template>
 
@@ -217,7 +237,7 @@ export default {
     }
   },
   mounted () {
-
+    
   },
   methods: {
     handleSelectWidget (index) {
@@ -263,6 +283,19 @@ export default {
       }
 
       this.data.list.splice(index, 0, cloneData)
+
+      if (this.data.list[index].type === 'selectcountry1') {
+
+        cloneData = {
+          ...cloneData,
+          options: {
+            ...cloneData.options,
+            options: cloneData.options.options.map(item => ({...item}))
+          }
+        }
+      }
+
+      //this.data.list.splice(index, 0, cloneData)
 
       this.$nextTick(() => {
         this.selectWidget = this.data.list[index + 1]

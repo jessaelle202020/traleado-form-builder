@@ -12,6 +12,7 @@ export default {
         rate: 'Rate',
         color: 'Color',
         select: 'Select',
+        selectcountry: 'Country',
         switch: 'Switch',
         slider: 'Slider',
         text: 'Text',
@@ -76,7 +77,8 @@ export default {
         customClass: 'Custom Class'
       },
       widget: {
-        title: 'Component Attribute',
+        addFields: 'Add Fields',
+        title: 'Field Options',
         model: 'ID',
         name: 'Name',
         width: 'Width',
@@ -160,6 +162,7 @@ export default {
         hidden: 'Hidden',
         readonly: 'Read Only',
         disabled: 'Disabled',
+        hideName: 'Hide Name',
         editable: 'Text box is editable',
         clearable: 'Display Clear Button',
         arrowControl: 'Use the arrow for time selection',
@@ -173,9 +176,7 @@ export default {
         tab: 'Tab',
         validatorRequired: 'Required',
         validatorType: 'Invaild format',
-        validatorPattern: 'Unmatched pattern',
-        showWordLimit: 'Show word limit',
-        maxlength: 'Max length',
+        validatorPattern: 'Unmatched pattern'
       }
     },
     upload: {

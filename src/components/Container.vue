@@ -3,10 +3,24 @@
     <el-container class="fm2-container">
       <el-main class="fm2-main">
         <el-container>
-          <el-aside width="250px">
-            <div class="components-list">
-              <template v-if="basicFields.length">
-                <div class="widget-cate">{{$t('fm.components.basic.title')}}</div>
+          <el-aside >
+            <div class="widget-config-container">
+              <el-container>
+                <el-header height="45px">
+                  <div class="config-tab" :class="{active: configTab=='feilds'}" @click="handleConfigSelect('feilds')">{{$t('fm.config.widget.addFields')}}</div>
+                  <div class="config-tab" :class="{active: configTab=='widget'}" @click="handleConfigSelect('widget')">{{$t('fm.config.widget.title')}}</div>
+                  <!-- <div class="config-tab" :class="{active: configTab=='form'}" @click="handleConfigSelect('form')">{{$t('fm.config.form.title')}}</div> -->
+                </el-header>
+                <el-main class="config-content">
+                  <widget-config v-show="configTab=='widget'" :data="widgetFormSelect"></widget-config>
+                  <form-config v-show="configTab=='form'" :data="widgetForm.config"></form-config>                                
+                </el-main>
+              </el-container>            
+            </div>
+            <div class="components-list">              
+              
+              <template v-if="basicFields.length && configTab=='feilds'">
+                <!-- <div class="widget-cate">{{$t('fm.components.basic.title')}}</div> -->
                 <draggable tag="ul" :list="basicComponents" 
                   v-bind="{group:{ name:'people', pull:'clone',put:false},sort:false, ghostClass: 'ghost'}"
                   @end="handleMoveEnd"
@@ -22,9 +36,10 @@
                     </li>
                   </template>                
                 </draggable>
-              </template>            
-              <template v-if="advanceFields.length">
-                <div class="widget-cate">{{$t('fm.components.advance.title')}}</div>
+              </template>     
+
+              <template v-if="advanceFields.length && configTab=='feilds'">
+                <!-- <div class="widget-cate">{{$t('fm.components.advance.title')}}</div> -->
                 <draggable tag="ul" :list="advanceComponents" 
                   v-bind="{group:{ name:'people', pull:'clone',put:false},sort:false, ghostClass: 'ghost'}"
                   @end="handleMoveEnd"
@@ -41,10 +56,9 @@
                   </template>
                 </draggable>
               </template>
-
               
-              <template v-if="layoutFields.length">
-                <div class="widget-cate">{{$t('fm.components.layout.title')}}</div>
+              <template v-if="layoutFields.length && configTab=='feilds'">
+                <!-- <div class="widget-cate">{{$t('fm.components.layout.title')}}</div> -->
                 <draggable tag="ul" :list="layoutComponents" 
                   v-bind="{group:{ name:'people', pull:'clone',put:false},sort:false, ghostClass: 'ghost'}"
                   @end="handleMoveEnd"
@@ -62,26 +76,30 @@
                 </draggable>
               </template>
               
-            </div>
+            </div>            
+
             
           </el-aside>
+
           <el-container class="center-container" direction="vertical">
+
             <el-header class="btn-bar" style="height: 45px;">
               <slot name="action">
               </slot>
-              <el-button v-if="upload" type="text" size="medium" icon="el-icon-upload2" @click="handleUpload">{{$t('fm.actions.import')}}</el-button>
-              <el-button v-if="clearable" type="text" size="medium" icon="el-icon-delete" @click="handleClear">{{$t('fm.actions.clear')}}</el-button>
-              <el-button v-if="preview" type="text" size="medium" icon="el-icon-view" @click="handlePreview">{{$t('fm.actions.preview')}}</el-button>
+              <!-- <el-button v-if="upload" type="text" size="medium" icon="el-icon-upload2" @click="handleUpload">{{$t('fm.actions.import')}}</el-button>
+              <el-button v-if="clearable" type="text" size="medium" icon="el-icon-delete" @click="handleClear">{{$t('fm.actions.clear')}}</el-button> -->
+              <!-- <el-button v-if="preview" type="text" size="medium" icon="el-icon-view" @click="handlePreview">{{$t('fm.actions.preview')}}</el-button> -->
+              <el-button v-if="preview" type="text" size="medium" icon="el-icon-view" @click="handlePreview" class="preview">{{$t('fm.actions.preview')}}</el-button>
               <el-button v-if="generateJson" type="text" size="medium" icon="el-icon-tickets" @click="handleGenerateJson">{{$t('fm.actions.json')}}</el-button>
               <el-button v-if="generateCode" type="text" size="medium" icon="el-icon-document" @click="handleGenerateCode">{{$t('fm.actions.code')}}</el-button>
             </el-header>
-            <el-main :class="{'widget-empty': widgetForm.list.length == 0}">
-              
-              <widget-form v-if="!resetJson"  ref="widgetForm" :data="widgetForm" :select.sync="widgetFormSelect"></widget-form>
+
+            <el-main :class="{'widget-empty': widgetForm.list.length == 0}">              
+              <widget-form v-if="!resetJson"  ref="widgetForm" :data="widgetForm" :select.sync="widgetFormSelect" @click="ff"></widget-form>
             </el-main>
           </el-container>
           
-          <el-aside class="widget-config-container">
+          <!-- <el-aside class="widget-config-container">
             <el-container>
               <el-header height="45px">
                 <div class="config-tab" :class="{active: configTab=='widget'}" @click="handleConfigSelect('widget')">{{$t('fm.config.widget.title')}}</div>
@@ -89,11 +107,10 @@
               </el-header>
               <el-main class="config-content">
                 <widget-config v-show="configTab=='widget'" :data="widgetFormSelect"></widget-config>
-                <form-config v-show="configTab=='form'" :data="widgetForm.config"></form-config>
+                <form-config v-show="configTab=='form'" :data="widgetForm.config"></form-config>                                
               </el-main>
-            </el-container>
-            
-          </el-aside>
+            </el-container>            
+          </el-aside> -->
 
           <cus-dialog
             :visible="previewVisible"
@@ -102,8 +119,13 @@
             width="1000px"
             form
           >
-            <generate-form insite="true" @on-change="handleDataChange" v-if="previewVisible" :data="widgetForm" :value="widgetModels" :remote="remoteFuncs" ref="generateForm">
+            <div style="text-align: center;">
+              <!-- <img src="@/assets/no-image.png" width="200" height="200" style="object-fit: cover;"/> -->
+              <img src="@/assets/no-image.png" v-if="companyLogo.length == 0" width="200" height="200" style="object-fit: cover;"/>              
+              <img :src="companyLogo" v-else width="200" height="200" style="object-fit: cover;"/>              
+            </div>
 
+            <generate-form insite="true" @on-change="handleDataChange" v-if="previewVisible" :data="widgetForm" :value="widgetModels" :remote="remoteFuncs" ref="generateForm">
               <template v-slot:blank="scope">
                 Width <el-input v-model="scope.model.blank.width" style="width: 100px"></el-input>
                 Height <el-input v-model="scope.model.blank.height" style="width: 100px"></el-input>
@@ -163,7 +185,7 @@
           </cus-dialog>
         </el-container>
       </el-main>
-      <el-footer height="30px" style="font-weight: 600;">Powered by <a target="_blank" href="https://github.com/GavinZhuLei/vue-form-making">vue-form-making</a></el-footer>
+      <!-- <el-footer height="30px" style="font-weight: 600;">Powered by <a target="_blank" href="https://github.com/GavinZhuLei/vue-form-making">vue-form-making</a></el-footer> -->
     </el-container>
   </div>
 </template>
@@ -214,15 +236,21 @@ export default {
     },
     basicFields: {
       type: Array,
-      default: () => ['input', 'textarea', 'number', 'radio', 'checkbox', 'time', 'date', 'rate', 'color', 'select', 'switch', 'slider', 'text']
+      //default: () => ['input', 'textarea', 'number', 'radio', 'checkbox', 'time', 'date', 'rate', 'color', 'select', 'switch', 'slider', 'text', 'link']
+      default: () => ['input', 'textarea', 'number', 'radio', 'checkbox', 'select', 'text', 'link', 'selectcountry']
     },
     advanceFields: {
       type: Array,
-      default: () => ['blank', 'imgupload', 'editor', 'cascader']
+      //default: () => ['blank', 'imgupload', 'editor', 'cascader']
+      default: () => []
     },
     layoutFields: {
       type: Array,
       default: () => ['grid']
+    },
+    companyLogo:{
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -235,13 +263,14 @@ export default {
         list: [],
         config: {
           labelWidth: 100,
-          labelPosition: 'right',
+          labelPosition: 'top',
           size: 'small'
         },
       },
-      configTab: 'widget',
+      configTab: 'feilds',
       widgetFormSelect: null,
       previewVisible: false,
+      //imageUrl: 'http://traleado-global.test/images/main-logo.jpg',
       jsonVisible: false,
       codeVisible: false,
       uploadVisible: false,
@@ -258,7 +287,7 @@ export default {
           }, 2000)
         },
         funcGetToken (resolve) {
-          request.get('http://tools-server.making.link/api/uptoken').then(res => {
+          request.get('http://tools-server.xiaoyaoji.cn/api/uptoken').then(res => {
             resolve(res.uptoken)
           })
         },
@@ -289,11 +318,15 @@ export default {
     this._loadComponents()
   },
   methods: {
+    ff(){
+      console.log('sdfsdf')
+    },
     _loadComponents () {
       this.basicComponents = this.basicComponents.map(item => {
         return {
           ...item,
-          name: this.$t(`fm.components.fields.${item.type}`)
+          //name: this.$t(`fm.components.fields.${item.type}`)
+          name: (item.type == 'link') ? 'Link' : this.$t(`fm.components.fields.${item.type}`)
         }
       })
       this.advanceComponents = this.advanceComponents.map(item => {
@@ -428,11 +461,23 @@ export default {
       deep: true,
       handler: function (val) {
         console.log(this.$refs.widgetForm)
+        this.configTab = 'widget'
       }
     },
-    '$i18n.locale': function (val) {
+    '$lang': function (val) {
       this._loadComponents()
     }
   }
 }
 </script>
+<style scoped>
+.fm-style .widget-config-container .config-tab{
+  width: unset;
+  margin-left: 15px;
+}
+.preview{
+  border: 1px solid;
+  padding: 5px 5px;
+  margin-right: 10px;
+}
+</style>

@@ -173,9 +173,7 @@ export default {
         tab: '标签页',
         validatorRequired: '必须填写',
         validatorType: '格式不正确',
-        validatorPattern: '格式不匹配',
-        showWordLimit: '显示字数统计',
-        maxlength: '最大字数',
+        validatorPattern: '格式不匹配'
       }
     },
     upload: {
